@@ -2,6 +2,7 @@ import React from "react";
 import NewTicketForm from "./NewTicketForm";
 import TicketList from "./TicketList";
 import TicketDetail from "./TicketDetail";
+import EditTicketForm from "./EditTicketForm";
 
 class TicketControl extends React.Component {
     constructor(props) {
@@ -9,7 +10,8 @@ class TicketControl extends React.Component {
         this.state = {
             formVisibleOnPage: false,
             mainTicketList: [],
-            selectedTicket: null
+            selectedTicket: null,
+            editing: false
         };
     }
 
@@ -42,19 +44,29 @@ class TicketControl extends React.Component {
         })
     }
 
+    handleEditClick = () => {
+        this.setState({editing: true});
+    }
+
     render(){
         let currentlyVisibleState = null;
         let buttonText = null;
         
-        if (this.state.selectedTicket !== null) {
+        if (this.state.editing) {
+            currentlyVisibleState = <EditTicketForm ticket = {this.state.selectedTicket}/>
+            buttonText = "Return to Ticket List";
+        }
+        else if (this.state.selectedTicket !== null) {
             currentlyVisibleState = <TicketDetail ticket = {this.state.selectedTicket} 
-                                                onClickingDelete = {this.handleDeletingTicket}/>
+                                                onClickingDelete = {this.handleDeletingTicket}
+                                                onClickingEdit = {this.handleEditClick}/>
             buttonText = "Return to Ticket List";
         }
         else if (this.state.formVisibleOnPage) {
             currentlyVisibleState = <NewTicketForm onNewTicketCreation={this.handleAddingNewTicketToList}/>;
             buttonText = "Return to Ticket List";
-        } else {
+        } 
+        else {
             currentlyVisibleState = <TicketList ticketList={this.state.mainTicketList} 
                                                 onTicketSelection={this.handleChangingSelectedTicket}/>;
             buttonText = "Add Ticket";
